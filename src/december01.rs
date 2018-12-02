@@ -28,7 +28,7 @@ fn main() {
         .into_iter()
         .map(|line| line.parse::<i32>().unwrap())
         .collect();
-    let sum: i32 = numbers.clone().iter().sum();
+    let sum: i32 = (&numbers).iter().sum();
     let dup = find_duplicate_frequency(&numbers);
 
     println!("Part 1: {:#?}", sum);
