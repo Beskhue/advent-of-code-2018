@@ -1,0 +1,13 @@
+[package]
+name = "advent_of_code_2018"
+version = "0.1.0"
+authors = ["Beskhue <thomas@kepow.org>"]
+description = "Solutions to the Advent of Code 2018 programming puzzles."
+
+[[bin]]
+name="december01"
+path="src/december01.rs"
+
+[[bin]]
+name="december02"
+path="src/december02.rs"
