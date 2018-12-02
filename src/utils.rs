@@ -1,6 +1,6 @@
+use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::fs::File;
 
 pub fn lines_from_file<P>(filename: P) -> Result<Vec<String>, io::Error>
 where
