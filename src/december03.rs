@@ -144,6 +144,7 @@ fn no_overlap(claims: &[Rect<u32>]) -> Option<usize> {
     None
 }
 
+/// Parses a list of claim Strings into claim Rects.
 fn parse_claims(lines: &[String]) -> Vec<Rect<u32>> {
     let re = regex::Regex::new(r"\D").unwrap();  // Matches all non-digits.
     
@@ -175,4 +176,56 @@ fn main() {
     println!("Part 1 (naive):            {:#?}", overlap_area_naive(&claims));
     println!("Part 1 (divide & conquer): {:#?}", overlap_area(&claims));
     println!("Part 2: {:#?}", no_overlap(&claims).unwrap_or(0))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse() {
+        let claims_str = vec![
+            "#1 @ 1,3: 4x4".to_owned(),
+            "#2 @ 3,1: 4x4".to_owned(),
+            "#3 @ 5,5: 2x2".to_owned(),
+            "#4 @ 6,6: 1x1".to_owned()
+        ];
+        let sizes = vec![
+            (1,3,4,4),
+            (3,1,4,4),
+            (5,5,2,2),
+            (6,6,1,1)
+        ];
+        
+        let claims = parse_claims(&claims_str);
+        
+        assert!(claims.len() == 4);
+        for (idx, (x, y, width, height)) in sizes.iter().enumerate() {
+            assert!(
+                claims[idx].origin.x == *x
+                && claims[idx].origin.y == *y
+                && claims[idx].size.width == *width
+                && claims[idx].size.height == *height
+            );
+        }
+    }
+    
+    #[test]
+    fn overlap() {
+        let claims_str = vec![
+            "#1 @ 1,3: 4x4".to_owned(),
+            "#2 @ 3,1: 4x4".to_owned()
+        ];
+        
+        let claims = parse_claims(&claims_str);
+        let overlap = claim_overlaps(&claims);
+        
+        assert!(overlap.len() == 1);
+        assert!(
+            overlap[0].origin.x == 3
+            && overlap[0].origin.y == 3
+            && overlap[0].size.width == 2
+            && overlap[0].size.height == 2
+        );
+    }
 }
