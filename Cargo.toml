@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Beskhue <thomas@kepow.org>"]
 description = "Solutions to the Advent of Code 2018 programming puzzles."
 
+[dependencies]
+regex = "1"
+euclid = "0.19"
+
 [[bin]]
 name="december01"
 path="src/december01.rs"
@@ -11,3 +15,7 @@ path="src/december01.rs"
 [[bin]]
 name="december02"
 path="src/december02.rs"
+
+[[bin]]
+name="december03"
+path="src/december03.rs"
