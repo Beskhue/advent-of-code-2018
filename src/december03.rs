@@ -4,6 +4,8 @@ use euclid::{Rect, Point2D, Size2D};
 use std::collections::BTreeMap;
 mod utils;
 
+type Result<T> = std::result::Result<T, Box<std::error::Error>>;
+
 ///Finds all overlaps between claims (including duplicate overlaps).
 fn claim_overlaps(claims: &[Rect<u32>]) -> Vec<Rect<u32>> {
     let mut intersections = Vec::new();
@@ -145,8 +147,8 @@ fn no_overlap(claims: &[Rect<u32>]) -> Option<usize> {
 }
 
 /// Parses a list of claim Strings into claim Rects.
-fn parse_claims(lines: &[String]) -> Vec<Rect<u32>> {
-    let re = regex::Regex::new(r"\D").unwrap();  // Matches all non-digits.
+fn parse_claims(lines: &[String]) -> Result<Vec<Rect<u32>>> {
+    let re = regex::Regex::new(r"\D")?;  // Matches all non-digits.
     
     lines
         .iter()
@@ -155,27 +157,29 @@ fn parse_claims(lines: &[String]) -> Vec<Rect<u32>> {
             let nstr = re.replace_all(s, " ");
             
             // Parse all numbers.
-            let numbers: Vec<_> = nstr
+            let numbers = nstr
                 .split(' ')
                 .filter(|s| !s.is_empty())
-                .map(|s| s.parse().unwrap())
-                .collect();
+                .map(|s| s.parse::<u32>().map_err(|e| e.into()))
+                .collect::<Result<Vec<_>>>()?;
             
-            Rect::new(
+            Ok(Rect::new(
                 Point2D::new(numbers[1], numbers[2]),
                 Size2D::new(numbers[3], numbers[4])
-            )
+            ))
         })
-        .collect()
+        .collect::<Result<Vec<_>>>()
 }
 
-fn main() {
-    let lines = utils::lines_from_file("input/december03.txt").unwrap();
-    let claims = parse_claims(&lines);
+fn main() -> Result<()> {
+    let lines = utils::lines_from_file("input/december03.txt")?;
+    let claims = parse_claims(&lines)?;
     
     println!("Part 1 (naive):            {:#?}", overlap_area_naive(&claims));
     println!("Part 1 (divide & conquer): {:#?}", overlap_area(&claims));
-    println!("Part 2: {:#?}", no_overlap(&claims).unwrap_or(0))
+    println!("Part 2: {:#?}", no_overlap(&claims).unwrap_or(0));
+    
+    Ok(())
 }
 
 #[cfg(test)]
