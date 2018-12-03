@@ -144,11 +144,10 @@ fn no_overlap(claims: &[Rect<u32>]) -> Option<usize> {
     None
 }
 
-fn main() {
-    let lines = utils::lines_from_file("input/december03.txt").unwrap();
+fn parse_claims(lines: &[String]) -> Vec<Rect<u32>> {
     let re = regex::Regex::new(r"\D").unwrap();  // Matches all non-digits.
     
-    let claims: Vec<_> = lines
+    lines
         .iter()
         .map(|s| {
             // Replace all non-digits by spaces.
@@ -166,7 +165,12 @@ fn main() {
                 Size2D::new(numbers[3], numbers[4])
             )
         })
-        .collect();
+        .collect()
+}
+
+fn main() {
+    let lines = utils::lines_from_file("input/december03.txt").unwrap();
+    let claims = parse_claims(&lines);
     
     println!("Part 1 (naive):            {:#?}", overlap_area_naive(&claims));
     println!("Part 1 (divide & conquer): {:#?}", overlap_area(&claims));
