@@ -21,7 +21,7 @@ fn parse_events(lines: &[String]) -> Result<Vec<(i64, Event)>> {
         .iter()
         .map(|s| {
             // Replace all non-digits by spaces.
-            let captures = re.captures(s).ok_or(format!("String {} does not match", s))?;
+            let captures = re.captures(s).ok_or_else(|| format!("String {} does not match", s))?;
             
             let year = captures.name("year").ok_or("Parse err")?.as_str();
             let month = captures.name("month").ok_or("Parse err")?.as_str();
@@ -44,9 +44,9 @@ fn parse_events(lines: &[String]) -> Result<Vec<(i64, Event)>> {
             Ok((concat.parse::<i64>()?, event?))
         })
         .collect::<Result<Vec<_>>>()?;
-        
+
     v.sort_by_key(|(time, _)| *time);
-    
+
     Ok(v)
 }
 
@@ -62,7 +62,7 @@ fn events_by_guard(events: Vec<(i64, Event)>) -> HashMap<i32, Vec<(i64, Event)>>
                 current_guard = n
             }
             _ => {
-                map.entry(current_guard).or_insert(Vec::new()).push((time, event))
+                map.entry(current_guard).or_insert_with(Vec::new).push((time, event))
             }
         }
     }
@@ -90,7 +90,7 @@ fn part1(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
         ))
     }
     
-    let (guard, sleep_time) = *sleep_time.iter().max_by_key(|(_, t)| t).ok_or("No events")?;
+    let (guard, _) = *sleep_time.iter().max_by_key(|(_, t)| t).ok_or("No events")?;
     let mut sleep_minute_count: HashMap<i64, i32> = HashMap::new();
     let mut sleep_start_minute = 0;
     
@@ -109,7 +109,7 @@ fn part1(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
     
     let (minute, _) = sleep_minute_count.iter().max_by_key(|(_, t)| *t).ok_or("No events")?;
     
-    Ok(guard as i64 * minute)
+    Ok(i64::from(guard) * minute)
 }
 
 fn part2(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
@@ -142,7 +142,7 @@ fn part2(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
         }
     }
     
-    Ok(max_guard as i64 * max_minute)
+    Ok(i64::from(max_guard) * max_minute)
 }
 
 fn main() -> Result<()> {

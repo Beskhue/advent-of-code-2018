@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 mod utils;
 
-fn find_duplicate_frequency(numbers: &Vec<i32>) -> i32 {
+fn find_duplicate_frequency(numbers: &[i32]) -> i32 {
     let mut frequencies = BTreeMap::new();
     let mut found = false;
     let mut frequency = 0;

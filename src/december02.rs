@@ -25,7 +25,7 @@ fn checksum(ids: &Vec<String>) -> i32 {
     exactly2 * exactly3
 }
 
-fn find_similar_ids(ids: &Vec<String>) -> Option<(&str, &str)> {
+fn find_similar_ids(ids: &[String]) -> Option<(&str, &str)> {
     for id1 in ids {
         for id2 in ids {
             assert!(id1.len() == id2.len());

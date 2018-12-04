@@ -11,12 +11,9 @@ fn claim_overlaps(claims: &[Rect<u32>]) -> Vec<Rect<u32>> {
     let mut intersections = Vec::new();
     
     for (idx, rect1) in claims[1..].iter().enumerate() {
-        for rect2 in claims[..idx+1].iter() {
-            match rect1.intersection(rect2) {
-                Some(intersection) => {
-                    intersections.push(intersection)
-                }
-                _ => {}
+        for rect2 in claims[..=idx].iter() {
+            if let Some(intersection) = rect1.intersection(rect2) {
+                intersections.push(intersection)
             }
         }
     }
@@ -38,7 +35,7 @@ fn overlap_area_naive(claims: &[Rect<u32>]) -> u32 {
             }
         }
     }
-    
+
     overlaps.len() as u32
 }
 
@@ -61,7 +58,7 @@ fn overlap_area(claims: &[Rect<u32>]) -> u32 {
         .unwrap();
     
     fn area(bound: &Rect<u32>, overlaps: &[Rect<u32>]) -> u32 {
-        if overlaps.len() == 0 {
+        if overlaps.is_empty() {
             0
         } else {
             let overlap = overlaps[0];
