@@ -201,7 +201,7 @@ mod tests {
             (6,6,1,1)
         ];
         
-        let claims = parse_claims(&claims_str);
+        let claims = parse_claims(&claims_str).unwrap();
         
         assert!(claims.len() == 4);
         for (idx, (x, y, width, height)) in sizes.iter().enumerate() {
@@ -221,7 +221,7 @@ mod tests {
             "#2 @ 3,1: 4x4".to_owned()
         ];
         
-        let claims = parse_claims(&claims_str);
+        let claims = parse_claims(&claims_str).unwrap();
         let overlap = claim_overlaps(&claims);
         
         assert!(overlap.len() == 1);
