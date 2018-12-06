@@ -39,7 +39,7 @@ fn get_polymer(lines: &[String]) -> Result<Vec<Unit>> {
     )
 }
 
-fn react<'a>(polymer: &'a [Unit]) -> Vec<&'a Unit> {
+fn react(polymer: &[Unit]) -> Vec<&Unit> {
     polymer.iter().fold(Vec::new(), |mut reacted, unit| {
         if !reacted.is_empty() && unit.is_opposite(reacted.last().unwrap()) {
             reacted.pop();
