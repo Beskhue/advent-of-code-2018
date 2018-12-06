@@ -15,18 +15,16 @@ enum Event {
 /// representation of [year][month][day][hour][minute]. For example,
 /// "2018-12-25 23:57" is 201812252357
 fn parse_events(lines: &[String]) -> Result<Vec<(i64, Event)>> {
-    let re = regex::Regex::new(r"^\[(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2}) (?P<hour>\d{2}):(?P<minute>\d{2})\] ((?P<sleep>falls asleep)|(?P<wake>wakes up)|(Guard #(?P<guard>\d+) begins shift))$")?;
+    let re = regex::Regex::new(r"^\[\d{4}-\d{2}-\d{2} \d{2}:(?P<minute>\d{2})\] ((?P<sleep>falls asleep)|(?P<wake>wakes up)|(Guard #(?P<guard>\d+) begins shift))$")?;
     
-    let mut v = lines
+    let mut lines: Vec<String> = lines.iter().cloned().collect();
+    lines.sort();
+
+    let v = lines
         .iter()
         .map(|s| {
-            // Replace all non-digits by spaces.
             let captures = re.captures(s).ok_or_else(|| format!("String {} does not match", s))?;
-            
-            let year = captures.name("year").ok_or("Parse err")?.as_str();
-            let month = captures.name("month").ok_or("Parse err")?.as_str();
-            let day = captures.name("day").ok_or("Parse err")?.as_str();
-            let hour = captures.name("hour").ok_or("Parse err")?.as_str();
+
             let minute = captures.name("minute").ok_or("Parse err")?.as_str();
             let sleep = captures.name("sleep");
             let wake = captures.name("wake");
@@ -39,13 +37,9 @@ fn parse_events(lines: &[String]) -> Result<Vec<(i64, Event)>> {
                 _ => Err("Parse failure")
             };
             
-            let concat = format!("{}{}{}{}{}", year, month, day, hour, minute);
-            
-            Ok((concat.parse::<i64>()?, event?))
+            Ok((minute.parse::<i64>()?, event?))
         })
         .collect::<Result<Vec<_>>>()?;
-
-    v.sort_by_key(|(time, _)| *time);
 
     Ok(v)
 }
@@ -70,8 +64,6 @@ fn events_by_guard(events: Vec<(i64, Event)>) -> HashMap<i32, Vec<(i64, Event)>>
     map
 }
 
-fn time_to_minute(t: i64) -> i64 { t - t / 100 * 100 }
-
 fn part1(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
     let mut sleep_time: Vec<(i32, i64)> = Vec::new();
     
@@ -79,12 +71,12 @@ fn part1(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
         sleep_time.push((*guard, 
             events.iter()
                 .enumerate()
-                .filter(|(idx, _)| (idx)%2 == 1)
+                .filter(|(idx, _)| idx%2 == 1)
                 .map(|(_, (t, _))| t)
                 .sum::<i64>()
             - events.iter()
                 .enumerate()
-                .filter(|(idx, _)| (idx)%2 == 0)
+                .filter(|(idx, _)| idx%2 == 0)
                 .map(|(_, (t, _))| t)
                 .sum::<i64>()
         ))
@@ -96,9 +88,9 @@ fn part1(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
     
     for (idx, (t, _)) in guard_events[&guard].iter().enumerate() {
         if idx % 2 == 0 {
-            sleep_start_minute = time_to_minute(*t)
+            sleep_start_minute = *t
         } else {
-            let to = time_to_minute(*t);
+            let to = *t;
             
             for minute in sleep_start_minute..to {
                 let count = sleep_minute_count.entry(minute).or_insert(0);
@@ -122,9 +114,9 @@ fn part2(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
         let mut sleep_start_minute = 0;
         for (idx, (t, _)) in events.iter().enumerate() {
             if idx % 2 == 0 {
-                sleep_start_minute = time_to_minute(*t)
+                sleep_start_minute = *t
             } else {
-                let to = time_to_minute(*t);
+                let to = *t;
                 
                 for minute in sleep_start_minute..to {
                     let count = sleep_minute_count.entry(minute).or_insert(0);
@@ -148,7 +140,7 @@ fn part2(guard_events: &HashMap<i32, Vec<(i64, Event)>>) -> Result<i64> {
 fn main() -> Result<()> {
     let lines = utils::lines_from_file("input/december04.txt")?;
     let events = events_by_guard(parse_events(&lines)?);
-    
+
     println!("Part 1: {:#?}", part1(&events)?);
     println!("Part 2: {:#?}", part2(&events)?);
     
