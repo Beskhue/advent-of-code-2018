@@ -28,8 +28,8 @@ fn parse_steps(lines: &[String]) -> Result<HashMap<char, Step>> {
 	let mut map = HashMap::new();
 
 	for line in lines {
-		let char1 = line.chars().nth(5).ok_or(format!("Malformed string: {:#?}", line))?;
-		let char2 = line.chars().nth(36).ok_or(format!("Malformed string: {:#?}", line))?;
+		let char1 = line.chars().nth(5).ok_or_else(|| format!("Malformed string: {:#?}", line))?;
+		let char2 = line.chars().nth(36).ok_or_else(|| format!("Malformed string: {:#?}", line))?;
 
 		map.entry(char1).or_insert(Step { name: char1, dependencies: Vec::new() });
 		map.entry(char2).or_insert(Step { name: char2, dependencies: Vec::new() }).dependencies.push(char1);
