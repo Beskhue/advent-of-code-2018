@@ -14,7 +14,7 @@ fn parse_coordinates(lines: &[String]) -> Result<Vec<Point2D<i32>>> {
 		.collect()
 }
 
-fn distance(coord: &Point2D<i32>, other_coord: &Point2D<i32>) -> i32 {
+fn distance(coord: Point2D<i32>, other_coord: Point2D<i32>) -> i32 {
 	(coord.x - other_coord.x).abs() + (coord.y - other_coord.y).abs()
 }
 
@@ -32,7 +32,7 @@ fn part1(coords: &[Point2D<i32>]) -> i32 {
 			let mut closest = None;
 			let mut min_distance = std::i32::MAX;
 			for coord in coords.iter() {
-				let dist = distance(coord, &point);
+				let dist = distance(*coord, point);
 				if dist < min_distance {
 					min_distance = dist;
 					closest = Some(coord);
@@ -69,7 +69,7 @@ fn part2(coords: &[Point2D<i32>]) -> i32 {
 	for x in bbox.origin.x..=bbox.origin.x + bbox.size.width {
 		for y in bbox.origin.y..=bbox.origin.y + bbox.size.height {
 			let point = Point2D::new(x, y);
-			if coords.iter().fold(0, |acc, coord| acc + distance(coord, &point)) < 10_000 {
+			if coords.iter().fold(0, |acc, coord| acc + distance(*coord, point)) < 10_000 {
 				size += 1;
 			}
 		}
