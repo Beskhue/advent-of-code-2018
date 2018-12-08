@@ -2,7 +2,7 @@ mod utils;
 
 type Result<T> = std::result::Result<T, Box<std::error::Error>>;
 
-fn sum1(tree: &[i32]) -> (&[i32], i32) {
+fn sum1(tree: &[u32]) -> (&[u32], u32) {
 	let mut tree = tree;
 	let mut sum_metadata = 0;
     let num_nodes = tree[0];
@@ -22,7 +22,7 @@ fn sum1(tree: &[i32]) -> (&[i32], i32) {
     (&tree[num_metadata as usize..], sum_metadata)
 }
 
-fn sum2(tree: &[i32]) -> (&[i32], i32) {
+fn sum2(tree: &[u32]) -> (&[u32], u32) {
 	let mut tree = tree;
 	let mut sum_metadata = 0;
 	let mut child_val = Vec::new();
@@ -41,7 +41,7 @@ fn sum2(tree: &[i32]) -> (&[i32], i32) {
     		sum_metadata += tree[i as usize];
     	} else {
 			let idx = tree[i as usize] - 1;
-			if idx >= 0 && (idx as usize) < child_val.len() {
+			if (idx as usize) < child_val.len() {
 				sum_metadata += child_val[idx as usize];
 			}
 
@@ -53,7 +53,7 @@ fn sum2(tree: &[i32]) -> (&[i32], i32) {
 
 fn main() -> Result<()> {
     let lines = utils::lines_from_file("input/december08.txt")?;
-    let tree: Vec<i32> = lines[0].split(" ").map(|c| c.parse::<i32>().unwrap()).collect();
+    let tree: Vec<u32> = lines[0].split(" ").map(|c| c.parse::<u32>().unwrap()).collect();
 
     println!("Part 1: {:?}", sum1(&tree));
     println!("Part 2: {:?}", sum2(&tree));
