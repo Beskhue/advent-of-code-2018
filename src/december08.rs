@@ -34,7 +34,6 @@ fn sum2(tree: &[i32]) -> (&[i32], i32) {
     	let (new_tree, sum) = sum2(tree);
     	tree = new_tree;
     	child_val.push(sum);
-    	//sum_metadata += sum;
     }
 
     for i in 0..num_metadata {
@@ -55,7 +54,6 @@ fn sum2(tree: &[i32]) -> (&[i32], i32) {
 fn main() -> Result<()> {
     let lines = utils::lines_from_file("input/december08.txt")?;
     let tree: Vec<i32> = lines[0].split(" ").map(|c| c.parse::<i32>().unwrap()).collect();
-    //let deps = parse_steps(&lines)?;
 
     println!("Part 1: {:?}", sum1(&tree));
     println!("Part 2: {:?}", sum2(&tree));
