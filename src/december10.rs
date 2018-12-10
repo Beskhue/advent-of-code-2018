@@ -59,9 +59,9 @@ fn conserve_momentum_bsearch(sky: &mut Sky) -> (Sky, i32) {
     let mut prev_middle = 0;
 
     loop {
-        if left == right - 1 {
+        if left == right {
             for (x, v) in sky.iter_mut() {
-                *x -= *v;
+                *x += *v * (left - prev_middle - 1);
             }
             break (sky.clone(), right as i32)
         }
@@ -82,9 +82,17 @@ fn conserve_momentum_bsearch(sky: &mut Sky) -> (Sky, i32) {
 
         prev_middle = middle;
         if area1 >= area2 {
-            left = middle;
+            if left == right - 1 {
+                left = middle + 1;
+            } else {
+                left = middle;
+            }
         } else {
-            right = middle;
+            if left == right - 1 {
+                right = middle - 1;
+            } else {
+                right = middle;
+            }
         }
     }
 
