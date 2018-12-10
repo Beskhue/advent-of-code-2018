@@ -1,3 +1,5 @@
+#![feature(test)]
+extern crate test;
 extern crate regex;
 extern crate euclid;
 use euclid::{Rect, Point2D, Vector2D};
@@ -47,6 +49,50 @@ fn conserve_momentum(sky: &mut Sky) -> (Sky, i32) {
     }
 }
 
+/// Supposed to be quicker than the naive conserve_momuntum, but for
+/// some reason is way slower. Naive implementation on my input requires
+/// 10375 steps (one for each second), while the binary search one
+/// requires only 14 steps. The compiler is probably doing some magic.
+/// > running 2 tests
+/// > test tests::search_binary ... bench:      12,923 ns/iter (+/- 511)
+/// > test tests::search_naive  ... bench:      13,050 ns/iter (+/- 1,900)
+fn conserve_momentum_bsearch(sky: &mut Sky) -> (Sky, i32) {
+    let mut left = 0;
+    let mut right = 3 * 60 * 60;
+    let mut prev_middle = 0;
+
+    loop {
+        if left == right - 1 {
+            for (x, v) in sky.iter_mut() {
+                *x -= *v;
+            }
+            break (sky.clone(), right as i32)
+        }
+
+        let middle = left + (right - left) / 2;
+
+        for (x, v) in sky.iter_mut() {
+            *x += *v * (middle - prev_middle - 1);
+        }
+
+        let area1 = Rect::from_points(sky.iter().map(|(x, _)| x)).size.area();
+
+        for (x, v) in sky.iter_mut() {
+            *x += *v;
+        }
+        
+        let area2 = Rect::from_points(sky.iter().map(|(x, _)| x)).size.area();
+
+        prev_middle = middle;
+        if area1 >= area2 {
+            left = middle;
+        } else {
+            right = middle;
+        }
+    }
+
+}
+
 fn ascii_art(sky: Sky) -> String {
     let mut s = "".to_owned();
     let bbox = Rect::from_points(sky.iter().map(|(x, _)| x));
@@ -73,4 +119,24 @@ fn main() -> Result<()> {
     println!("Part 2: {}", seconds);
     
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn search_naive(b: &mut Bencher) {
+        let lines = utils::lines_from_file("input/december10.txt").unwrap();
+        let mut sky = parse(&lines).unwrap();
+        b.iter(|| conserve_momentum(&mut sky));
+    }
+
+    #[bench]
+    fn search_binary(b: &mut Bencher) {
+        let lines = utils::lines_from_file("input/december10.txt").unwrap();
+        let mut sky = parse(&lines).unwrap();
+        b.iter(|| conserve_momentum_bsearch(&mut sky));
+    }
 }
