@@ -50,7 +50,7 @@ fn main() -> Result<()> {
     let last_marble = config[6].parse::<u64>()?;
 
     println!("Part 1: {:?}", play(num_players, last_marble));
-    println!("Part 1: {:?}", play(num_players, last_marble * 100));
+    println!("Part 2: {:?}", play(num_players, last_marble * 100));
     
     Ok(())
 }
