@@ -49,16 +49,13 @@ fn conserve_momentum(sky: &mut Sky) -> (Sky, i32) {
     }
 }
 
-/// Supposed to be quicker than the naive conserve_momuntum, but for
-/// some reason is way slower. Naive implementation on my input requires
-/// 10375 steps (one for each second), while the binary search one
-/// requires only 14 steps. The compiler is probably doing some magic.
+/// Quicker than the naive search:
 /// > running 2 tests
-/// > test tests::search_binary ... bench:      12,923 ns/iter (+/- 511)
-/// > test tests::search_naive  ... bench:      13,050 ns/iter (+/- 1,900)
+/// > test tests::search_binary ... bench:      16,369 ns/iter (+/- 2,829)
+/// > test tests::search_naive  ... bench:   4,628,550 ns/iter (+/- 1,951,750)
 fn conserve_momentum_bsearch(sky: &mut Sky) -> (Sky, i32) {
     let mut left = 0;
-    let mut right = 3 * 60 * 60;
+    let mut right = 12 * 60 * 60;
     let mut prev_middle = 0;
 
     loop {
@@ -114,7 +111,7 @@ fn ascii_art(sky: Sky) -> String {
 fn main() -> Result<()> {
     let lines = utils::lines_from_file("input/december10.txt")?;
     let mut sky = parse(&lines)?;
-    let (sky, seconds) = conserve_momentum(&mut sky);
+    let (sky, seconds) = conserve_momentum_bsearch(&mut sky);
     println!("Part 1:\n{}", ascii_art(sky));
     println!("Part 2: {}", seconds);
     
@@ -129,14 +126,14 @@ mod tests {
     #[bench]
     fn search_naive(b: &mut Bencher) {
         let lines = utils::lines_from_file("input/december10.txt").unwrap();
-        let mut sky = parse(&lines).unwrap();
-        b.iter(|| conserve_momentum(&mut sky));
+        let sky = parse(&lines).unwrap();
+        b.iter(|| conserve_momentum(&mut sky.clone()));
     }
 
     #[bench]
     fn search_binary(b: &mut Bencher) {
         let lines = utils::lines_from_file("input/december10.txt").unwrap();
-        let mut sky = parse(&lines).unwrap();
-        b.iter(|| conserve_momentum_bsearch(&mut sky));
+        let sky = parse(&lines).unwrap();
+        b.iter(|| conserve_momentum_bsearch(&mut sky.clone()));
     }
 }
