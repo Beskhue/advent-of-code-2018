@@ -12,8 +12,11 @@ fn rotate(table: &mut VecDeque<u64>, rot: i32) {
             rot -= 1;
         }
     } else {
-        let ele = table.pop_front().unwrap();
-        table.push_back(ele);
+        while rot < 0 {
+            let ele = table.pop_front().unwrap();
+            table.push_back(ele);
+            rot += 1;
+        }
     }
 }
 
