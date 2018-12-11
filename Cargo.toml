@@ -7,7 +7,6 @@ description = "Solutions to the Advent of Code 2018 programming puzzles."
 [dependencies]
 regex = "1"
 euclid = "0.19"
-nalgebra = "0.16.0"
 
 [[bin]]
 name="december01"
