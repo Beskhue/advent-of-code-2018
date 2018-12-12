@@ -51,3 +51,7 @@ path="src/december10.rs"
 [[bin]]
 name="december11"
 path="src/december11.rs"
+
+[[bin]]
+name="december12"
+path="src/december12.rs"
