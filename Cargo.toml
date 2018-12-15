@@ -7,6 +7,7 @@ description = "Solutions to the Advent of Code 2018 programming puzzles."
 [dependencies]
 regex = "1"
 euclid = "0.19"
+maplit = "1.0.1"
 
 [[bin]]
 name="december01"
@@ -63,3 +64,7 @@ path="src/december13.rs"
 [[bin]]
 name="december14"
 path="src/december14.rs"
+
+[[bin]]
+name="december15"
+path="src/december15.rs"
