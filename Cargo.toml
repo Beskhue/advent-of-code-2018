@@ -80,3 +80,7 @@ path="src/december17.rs"
 [[bin]]
 name="december18"
 path="src/december18.rs"
+
+[[bin]]
+name="december19"
+path="src/december19.rs"
