@@ -40,12 +40,12 @@ fn execute(instr: Instr, reg_bank: &mut [i32]) -> &mut [i32] {
         Bori => r!(i1) | i2,
         Setr => r!(i1),
         Seti => i1,
-        Gtir => if i1 > r!(i2) { 1 } else { 0 }
-        Gtri => if r!(i1) > i2 { 1 } else { 0 }
-        Gtrr => if r!(i1) > r!(i2) { 1 } else { 0 }
-        Eqir => if i1 == r!(i2) { 1 } else { 0 }
-        Eqri => if r!(i1) == i2 { 1 } else { 0 }
-        Eqrr => if r!(i1) == r!(i2) { 1 } else { 0 }
+        Gtir => (i1 > r!(i2)).into(),
+        Gtri => (r!(i1) > i2).into(),
+        Gtrr => (r!(i1) > r!(i2)).into(),
+        Eqir => (i1 == r!(i2)).into(),
+        Eqri => (r!(i1) == i2).into(),
+        Eqrr => (r!(i1) == r!(i2)).into(),
     };
     reg_bank
 }
